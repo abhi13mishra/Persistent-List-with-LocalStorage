@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Simple List App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 30px;
+      max-width: 500px;
+    }
+    input, button {
+      padding: 8px;
+      margin: 5px 0;
+      width: 100%;
+      font-size: 16px;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      padding: 8px;
+      background: #f4f4f4;
+      margin: 5px 0;
+      border-radius: 5px;
+    }
+    .empty {
+      color: #777;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>My Item List</h2>
+
+  <input type="text" id="itemInput" placeholder="Enter item...">
+  <button onclick="addItem()">Add Item</button>
+  <button onclick="clearAll()">Clear All</button>
+
+  <ul id="itemList"></ul>
+  <p id="emptyMessage" class="empty">No items added yet.</p>
+
+  <script>
+    const itemInput = document.getElementById('itemInput');
+    const itemList = document.getElementById('itemList');
+    const emptyMessage = document.getElementById('emptyMessage');
+
+    let items = [];
+
+    // Load from localStorage on initial load
+    window.onload = () => {
+      const saved = localStorage.getItem('myItems');
+      if (saved) {
+        items = JSON.parse(saved);
+        renderList();
+      }
+    };
+
+    function saveToLocalStorage() {
+      localStorage.setItem('myItems', JSON.stringify(items));
+    }
+
+    function addItem() {
+      const value = itemInput.value.trim();
+      if (value === '') return;
+
+      items.push(value);
+      itemInput.value = '';
+      saveToLocalStorage();
+      renderList();
+    }
+
+    function clearAll() {
+      if (confirm("Are you sure you want to clear all items?")) {
+        items = [];
+        saveToLocalStorage();
+        renderList();
+      }
+    }
+
+    function renderList() {
+      itemList.innerHTML = '';
+
+      if (items.length === 0) {
+        emptyMessage.style.display = 'block';
+        return;
+      }
+
+      emptyMessage.style.display = 'none';
+      items.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        itemList.appendChild(li);
+      });
+    }
+  </script>
+
+</body>
+</html>
